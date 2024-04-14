@@ -24,7 +24,7 @@ public:
 	UFUNCTION()
 	void OnRep_Winner();
 
-	UPROPERTY(BlueprintAssignable, Category = "Game State")
+	UPROPERTY()
 	FWinnerFound OnWinnerFound;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

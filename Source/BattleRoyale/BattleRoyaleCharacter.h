@@ -70,11 +70,20 @@ public:
 	UPROPERTY(ReplicatedUsing = OnRep_Killer, BlueprintReadOnly, Category = Gameplay)
 	ABattleRoyaleCharacter* Killer;
 
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> DeathScreenWidgetClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "UI")
+	TSubclassOf<UUserWidget> GameOverWidgetClass;
+
 	UFUNCTION()
 	void OnRep_Killer();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION()
 	void ShowDeathScreen();
+
+	UFUNCTION()
+	void ShowGameOverScreen();
 
 protected:
 	/** Called for movement input */

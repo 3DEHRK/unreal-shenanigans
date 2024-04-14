@@ -11,6 +11,8 @@
 #include "InputActionValue.h"
 #include "Engine/LocalPlayer.h"
 #include "Net/UnrealNetwork.h"
+#include "Blueprint/UserWidget.h"
+#include "BRGameState.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -56,6 +58,11 @@ void ABattleRoyaleCharacter::BeginPlay()
 		}
 	}
 
+	if (!IsLocallyControlled())
+		return;
+
+	ABRGameState* GameState = Cast<ABRGameState>(GetWorld()->GetGameState());
+	GameState->OnWinnerFound.AddDynamic(this, &ABattleRoyaleCharacter::ShowGameOverScreen);
 }
 
 void ABattleRoyaleCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const {
@@ -95,6 +102,20 @@ void ABattleRoyaleCharacter::OnRep_Killer() {
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 	GetMesh()->SetCollisionResponseToAllChannels(ECR_Block);
 	SetLifeSpan(10.f);
+}
+
+void ABattleRoyaleCharacter::ShowDeathScreen() {
+	if (!IsValid(DeathScreenWidgetClass))
+		return;
+	UUserWidget* DeathScreen = CreateWidget<UUserWidget>(GetWorld(), DeathScreenWidgetClass);
+	DeathScreen->AddToViewport();
+}
+
+void ABattleRoyaleCharacter::ShowGameOverScreen() {
+	if (!IsValid(GameOverWidgetClass))
+		return;
+	UUserWidget* GameOver = CreateWidget<UUserWidget>(GetWorld(), GameOverWidgetClass);
+	GameOver->AddToViewport();
 }
 
 void ABattleRoyaleCharacter::Move(const FInputActionValue& Value)

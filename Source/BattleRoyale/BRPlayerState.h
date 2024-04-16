@@ -13,5 +13,9 @@ UCLASS()
 class BATTLEROYALE_API ABRPlayerState : public APlayerState
 {
 	GENERATED_BODY()
+
+public:
+	UPROPERTY(Transient, BlueprintReadOnly)
+	float Health = 100.f;
 	
 };

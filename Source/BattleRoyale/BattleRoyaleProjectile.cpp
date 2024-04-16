@@ -8,6 +8,7 @@
 #include "BattleRoyalePlayerController.h"
 #include "Particles/ParticleSystemComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "BRPlayerState.h"
 
 ABattleRoyaleProjectile::ABattleRoyaleProjectile() 
 {
@@ -49,7 +50,7 @@ void ABattleRoyaleProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 		OtherComp->AddImpulseAtLocation(GetVelocity() * 100.0f, GetActorLocation());
 	}
 
-	if (!HasAuthority()) {
+	if (!HasAuthority()) {	//Causes listen server issues haha
 		ABattleRoyalePlayerController* KillerController = Cast<ABattleRoyalePlayerController>(GetOwner());
 		if (IsValid(KillerController) && KillerController->IsLocalPlayerController())
 			KillerController->ServerDestroyProjectile(this);
@@ -71,7 +72,12 @@ void ABattleRoyaleProjectile::OnHit(UPrimitiveComponent* HitComp, AActor* OtherA
 	if (!IsValid(KillerCharacter))
 		return;
 
+	ABRPlayerState* PlayerState = Cast<ABRPlayerState>(HitCharacter->GetPlayerState());
+	PlayerState->Health = PlayerState->Health - 30.f;
+
+	if (PlayerState->Health < 0.f) {
 	HitCharacter->Killer = KillerCharacter;
 	HitCharacter->OnRep_Killer();
 	GameMode->PlayerDied(HitCharacter, KillerCharacter);
+	}
 }
